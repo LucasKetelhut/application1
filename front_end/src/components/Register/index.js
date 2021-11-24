@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
 import Link from 'next/link';
-//import api from '../../services/api'
+import api from '../../services/api'
 import swal from 'sweetalert';
 import Router from 'next/router';
 
@@ -86,11 +86,11 @@ const Login = styled.div`
 `
 
 export default function Register() {
-    const [list, setList] = useState([]);
-    const [username, setUserName] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [name, setName] = useState([]);
     const [email, setEmail] = useState([]);
     const [country, setCountry] = useState([]);
-    const [userState, setUserState] = useState([]);
+    const [state, setState] = useState([]);
     const [city, setCity] = useState([]);
     const [zipcode, setZipCode] = useState([]);
     const [street, setStreet] = useState([]);
@@ -104,48 +104,42 @@ export default function Register() {
         e.preventDefault();
 
         const state = {
-            username,
+            name,
             email,
-            country,
-            userState,
-            city,
-            zipcode,
-            street,
-            number,
-            complement,
+            adress: {
+                country,
+                state,
+                city,
+                zipcode,
+                street,
+                number,
+                complement,
+            },
             cpf,
             pis,
             password
         }
 
-        // try {
-        //     const response  = await api.post('list', state);
-        //     const person = response.data;
-        //     setList([...list, person]);
-        // } catch(e) {
-        //     swal("Erro!", "", "error", {
-        //         buttons: false,
-        //         timer: 2500
-        //     })
-        //     console.log(e);
-        // } 
+        try {
+            const response  = await api.post('users', state);
+            const person = response.data;
+            setUsers([...users, person]);
 
-        setUserName("");
-        setEmail("");
-        setCountry("");
-        setUserState("");
-        setCity("");
-        setZipCode("");
-        setStreet("");
-        setNumber("");
-        setComplement("");
-        setCPF("");
-        setPIS("");
-        setPassword("");
+            swal("Obrigado por cadastrar-se!", "Seu cadastro foi concluído com sucesso!", "success", {
+                buttons: false,
+                timer: 2500
+            })
 
-        Router.push({
-            pathname: "/"
-        });
+            Router.push({
+                pathname: "/"
+            });
+
+        } catch (e) {
+            swal("Erro!", 'Este CPF já está cadastrado! Tente novamente com um diferente.', "error", {
+                buttons: false,
+                timer: 2500
+            })
+        } 
     }
 
     return (
@@ -154,9 +148,9 @@ export default function Register() {
             Cadastre-se!
         </Title>
         <Form action="POST" onSubmit={handleAddPerson}>
-            <input placeholder="Nome" type="text" name="username" id="username" value={username} required
+            <input placeholder="Nome" type="text" name="name" id="name" value={name} required
                 onChange={(e) => {
-                    setUserName(e.target.value)
+                    setName(e.target.value)
                 }}
             />
             <input placeholder="Email" type="email" name="email" id="email" value={email} required
@@ -169,11 +163,11 @@ export default function Register() {
                     setCountry(e.target.value)
                 }}
             />
-            <div id="Adress" class="firstRow">
-                <div class="firstRow">
-                    <input placeholder="Estado" type="text" name="userState" id="userState" value={userState} required
+            <div id="Adress" className="firstRow">
+                <div className="firstRow">
+                    <input placeholder="Estado" type="text" name="state" id="state" value={state} required
                         onChange={(e) => {
-                            setUserState(e.target.value)
+                            setState(e.target.value)
                         }}
                     />
                     <input placeholder="Município" type="text" name="city" id="city" value={city} required
@@ -187,7 +181,7 @@ export default function Register() {
                         }}
                     />
                 </div>
-                <div class="secondRow">
+                <div className="secondRow">
                     <input placeholder="Rua" type="text" name="street" id="street" value={street} required
                         onChange={(e) => {
                             setStreet(e.target.value)

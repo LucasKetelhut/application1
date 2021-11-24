@@ -42,7 +42,8 @@ const Form = styled.form`
 
     button:hover {
         cursor: pointer;
-        background-color: #ccc;
+        background-color:#029311;
+        color: #fff
     }
 `
 
